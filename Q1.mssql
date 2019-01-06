@@ -1,0 +1,55 @@
+
+drop table NFLgame1;
+drop table NFLteam1;
+drop table NFLplayer1;
+drop table injuryRecord1;
+
+create table NFLplayer1(
+playerID1 number(8),
+playerName1 varchar(10),
+playerPosition1 varchar (12),
+playerTeam1 varchar(10),
+skillLevel1 number(2),
+
+primary key(playerID1)
+);
+
+create table injuryRecord1(
+injuryID1 number(8),
+injDescription1 varchar(15),
+injPlayer1 number(8),
+
+primary key(injuryID1),
+foreign key(injPlayer1) references NFLplayer1 (playerID1)
+);
+
+create table NFLteam1(
+teamname1 varchar(10),
+teamID1 number(10),
+teamCity1 varchar(12),
+teamCaptain1 number(8),
+teamCoach1 varchar(10),
+
+primary key(teamname1),
+foreign key (teamCaptain1) references NFLplayer1 (playerID1)
+);
+
+alter table NFLplayer1
+add foreign key (playerTeam1) references NFLteam1 (teamname1);
+
+create table NFLgame1(
+hostTeam1 varchar(10),
+guestTeam1 varchar(10),
+dateGame1 varchar(14),
+hostScore1 number(2),
+guestScore1 number(2),
+
+primary key(hostTeam1, guestTeam1, dateGame1), --games can be payed b/w same teams, so all 3 should be part of key
+foreign key(hostTeam1) references NFLteam1 (teamname1),
+foreign key(guestTeam1) references NFLteam1 (teamname1)
+);
+
+INSERT INTO NFLplayer1 (playerID1,playerName1,playerPosition1,playerTeam1,skillLevel1) VALUES (11111,'MikeChen','QuarterBack',null, 3);
+INSERT INTO NFLteam1 (teamname1,teamID1,teamCity1,teamCaptain1,teamCoach1) VALUES ('Giants', 001,'NY', 22222, 'PorkChop');
+INSERT INTO NFLteam1 (teamname1,teamID1,teamCity1,teamCaptain1,teamCoach1) VALUES ('Lions', 007,'LA', null, 'JobHunt');
+INSERT INTO NFLgame1 (hostTeam1,guestTeam1,dateGame1,hostScore1,guestScore1) VALUES ('Lions', 'Giants','Aug 26th, 2017', 56, 65);

@@ -1,0 +1,57 @@
+Drop Table manufacturers;
+Drop Table products;
+
+CREATE TABLE manufacturers (
+   code number PRIMARY KEY NOT NULL,
+   name varchar(50) NOT NULL 
+);
+
+CREATE TABLE products (
+   code NUMBER PRIMARY KEY NOT NULL,
+   name varchar(50) NOT NULL ,
+   price real NOT NULL ,
+   manufacturer number NOT NULL
+      CONSTRAINT fk_manufacturers_code REFERENCES manufacturers(code)
+);
+
+INSERT INTO manufacturers(code,name) VALUES(1,'Sony');
+INSERT INTO manufacturers(code,name) VALUES(2,'Creative Labs');
+INSERT INTO manufacturers(code,name) VALUES(3,'Hewlett-Packard');
+INSERT INTO manufacturers(code,name) VALUES(4,'Iomega');
+INSERT INTO manufacturers(code,name) VALUES(5,'Fujitsu');
+INSERT INTO manufacturers(code,name) VALUES(6,'Winchester');
+
+INSERT INTO products(code,name,price,manufacturer) VALUES(1,'Hard drive',240,5);
+INSERT INTO products(code,name,price,manufacturer) VALUES(2,'Memory',120,6);
+INSERT INTO products(code,name,price,manufacturer) VALUES(3,'ZIP drive',150,4);
+INSERT INTO products(code,name,price,manufacturer) VALUES(4,'Floppy disk',5,6);
+INSERT INTO products(code,name,price,manufacturer) VALUES(5,'Monitor',240,1);
+INSERT INTO products(code,name,price,manufacturer) VALUES(6,'DVD drive',180,2);
+INSERT INTO products(code,name,price,manufacturer) VALUES(7,'CD drive',90,2);
+INSERT INTO products(code,name,price,manufacturer) VALUES(8,'Printer',270,3);
+INSERT INTO products(code,name,price,manufacturer) VALUES(9,'Toner cartridge',66,3);
+INSERT INTO products(code,name,price,manufacturer) VALUES(10,'DVD burner',180,2);
+
+-- Select the names of the products with a price less than or equal to $200
+select name from products where price <= 200;
+
+-- Select all the products with a price between $60 and $120
+select name from products where price > 60 and price <120;
+
+-- Select the name and price in cents (i.e., the price is in dollars).
+select name, price*100 from products;
+
+-- Select the product name, price, and manufacturer name of all the products.
+select p.name, p.price, m.name from products p join manufacturers m on p.manufacturer = m.code;
+
+-- Select all manufactures who currently do not have any listed products.
+select name from manufacturers minus 
+(select m.name from manufacturers m, products p where p.manufacturer = m.code);
+
+-- Select the name of each manufacturer along with the name and price of its most expensive product.
+select m.name, p.name, price from products p, manufacturers m where p.manufacturer = m.code and price >= all(
+select price from products p2 where p2.manufacturer = p.manufacturer);
+
+-- Select the names and average prices of manufacturer whose products have an average price larger than or equal to $150
+select m.name as Manufacturer, avg(price) as average 
+from products p, manufacturers m where p.manufacturer = m.code group by m.name having avg(price) >= 150;
